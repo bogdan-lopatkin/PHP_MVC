@@ -1,0 +1,39 @@
+{% extends 'layout.twig' %}
+{% block content %}
+
+    <div class="container">
+        <form method="post" onsubmit="addProduct(); return false;" id="form">
+            <div class="form-group">
+                <label for="name">Название товара:</label>
+                <input required type="text" id="name" class="form-control" name="name"
+                       placeholder="Название товара">
+            </div>
+            <div class="form-group">
+                <label for="image">Ссылка на изображение</label>
+                <input required type="text" id="image" class="form-control" name="image"
+                       placeholder="Ссылка на изображение">
+            </div>
+            <div class="form-group">
+                <label for="average_price">Средняя цена</label>
+                <input required type="number" id="average_price" class="form-control" name="average_price"
+                       placeholder="Средняя цена">
+            </div>
+            <div class="form-group">
+                <label for="author">Товар добавил</label>
+                <input required type="text" id="author" class="form-control" name="author"
+                       placeholder="Пользователь, добавивший товар">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Добавить товар</button>
+        </form>
+    </div>
+
+    <script>
+        function addProduct()
+        {
+            axios.post('/products', new FormData(document.getElementById('form'))).then((res) => {
+                location.href = '/products/' + res.data.id;
+            }).catch( (res) => {alert('При добавлении товара произошла ошибка')} );
+        }
+    </script>
+{% endblock %}

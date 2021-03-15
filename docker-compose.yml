@@ -1,0 +1,37 @@
+version: '3'
+services:
+  web:
+    build: ./
+    volumes:
+      - ./:/var/www/html/
+    ports:
+      - 8080:80
+    working_dir: /var/www/html/
+    tty: true
+    environment:
+      HISTFILE: ./.bash_history
+      PROMPT_COMMAND: history -a
+
+  mysql:
+    image: mysql:5.7
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+        MYSQL_ROOT_PASSWORD: 1234
+        MYSQL_DATABASE: testdb
+        MYSQL_USER: test
+        MYSQL_PASSWORD: 1234
+    volumes:
+      - ./databases:/var/lib/mysql
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:4.7
+    links:
+      - mysql:mysql
+    ports:
+      - 9191:80
+    environment:
+      TZ: Europe/Kiev
+      MYSQL_USERNAME: root
+      MYSQL_ROOT_PASSWORD: 1234
+      PMA_HOST: mysql
+      MYSQL_PASSWORD: 1234

@@ -1,0 +1,22 @@
+{
+  "name": "lopatkin/netpeak-test",
+  "authors": [
+    {
+      "name": "Bogdan Lopatkin",
+      "email": "bogdan.lopatkin@gmail.com"
+    }
+  ],
+  "require": {
+    "twig/twig": "^2.12"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "app/",
+      "Core\\": "core/"
+    },
+    "files": [
+      "helpers/config.php",
+      "helpers/view.php"
+    ]
+  }
+}

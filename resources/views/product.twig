@@ -1,0 +1,106 @@
+{% extends 'layout.twig' %}
+{% block content %}
+    {% set sum = 0 %}
+    {% set loops = 0 %}
+    {% for feedback in product.feedbacks %}
+        {% set sum = sum + feedback.rating %}
+        {% set loops = loops + 1 %}
+    {% endfor %}
+
+    <div class="container">
+        <h2>{{ product.name }} </h2>
+        <h4>Средняя оценка -
+        {% if sum >= 1 %}
+            {{ sum / loops }}
+            {% else %}
+            Еще нет ни одной оценки
+            {% endif %}
+        </h4>
+        <div>
+            <div>
+                <img class="w-100" src="{{ product.image }}" alt="">
+            </div>
+
+            {% if product.feedbacks | length > 0 %}
+            <table>
+                <tr>
+                    <th>Автор</th>
+                    <th>Оценка</th>
+                    <th>Комментарий</th>
+                    <th>Дата создания</th>
+                </tr>
+                {% for feedback in product.feedbacks %}
+                    <tr>
+                        <td>{{ feedback.author }}</td>
+                        <td>{{ feedback.rating }}</td>
+                        <td>{{ feedback.comment }}</td>
+                        <td>{{ feedback.created_at }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+{% else %}
+            <h3 class="mt-5">У товара нет отзывов</h3>
+            {% endif %}
+            <form  class="mt-5" id="form" onsubmit="addFeedback(); return false;">
+                <div class="form-group">
+                    <label for="name">Имя</label>
+                    <input required type="text" class="form-control" name="author" id="name"
+                           aria-describedby="emailHelp"
+                           placeholder="Ваше имя">
+                </div>
+                <div class="form-group">
+                    <label for="rating">Оценка</label>
+                    <select name="rating" class="form-control" id="rating">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="comment">Комментарий</label>
+                    <textarea required name="comment" class="form-control" id="comment" aria-describedby="emailHelp"
+                              placeholder="Ваш комментарий"></textarea>
+                </div>
+                <input type="hidden" name="product_id" value="{{ product.id }}">
+                <button type="submit" class="btn btn-primary">Оставить отзыв</button>
+            </form>
+        </div>
+    </div>
+    </body>
+
+    <style>
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td, th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+    </style>
+
+    <script>
+        function addFeedback(event) {
+            let formData = new FormData(document.getElementById('form'));
+            axios.post('/feedbacks', formData).then(() => {
+                location.reload()
+            }).catch(() => {
+                alert('Введены неверные данные')
+            })
+        }
+    </script>
+{% endblock %}

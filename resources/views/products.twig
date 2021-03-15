@@ -1,0 +1,102 @@
+{% extends 'layout.twig' %}
+{% block content %}
+
+    <div class="container">
+        <h2>Товары</h2>
+
+        <form id="form" onsubmit="">
+            <div class="form-group d-flex flex-nowrap">
+                <div class="w-50 d-flex flex-nowrap align-items-center" style="justify-content: space-around">
+                    <label class="d-block" for="sort_by">Сортировать поле</label>
+                    <select class="form-control w-50" id="sort_by" name="sort_by">
+                        <option value="name">Название</option>
+                        <option value="created_at">Дата добавления</option>
+                        <option value="author">Автор</option>
+                        <option value="feedbacks">Кол-во отзывов</option>
+                    </select>
+                </div>
+                <div class="w-50 d-flex flex-nowrap align-items-center" style="justify-content: space-around">
+                    <label class="d-block" for="sort_type">по</label>
+                    <select class="form-control w-50" id="sort_type" name="sort_type">
+                        <option value="desc">Убыванию</option>
+                        <option value="asc">Возрастанию</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">OK</button>
+            </div>
+        </form>
+        {% if products | length > 0 %}
+        <table>
+            <tr>
+                <th>Название</th>
+                <th>Изображение</th>
+                <th>Дата добавления</th>
+                <th>Добавил</th>
+                <th>Кол-во отзывов</th>
+            </tr>
+            {% for product in products %}
+                <tr>
+                    <td><a href="/products/{{ product.id }}">{{ product.name }}</a></td>
+                    <td><img style="max-width: 130px;"
+
+                                {% if product.image %}
+                                    src="{{ product.image }}"
+                                {% else %}
+                                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRvURrxVdCQ-qh_VmG80K7iMWpsKzuUOrVBA&usqp=CAU"
+                                {% endif %}
+                             alt="">
+                    </td>
+                    <td>{{ product.created_at }}</td>
+                    <td>{{ product.author }}</td>
+                    <td>{{ product.feedbacks | length }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <h3 class="mt-5">Товары отсутствуют</h3>
+        {% endif %}
+    </div>
+    <style>
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td, th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+    </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){
+            const urlParams = new URLSearchParams(window.location.search);
+            let sortBy = urlParams.get('sort_by');
+            let sortType = urlParams.get('sort_type');
+            changeSelectedOption(document.getElementById("sort_by"), sortBy);
+            changeSelectedOption(document.getElementById("sort_type"), sortType);
+        });
+
+        function changeSelectedOption(select, value)
+        {
+            let options = select.options;
+            for (var opt, j = 0; opt = options[j]; j++) {
+                if (opt.value === value) {
+                    select.selectedIndex = j;
+                    break;
+                }
+            }
+        }
+
+        function sort() {
+            axios.get('/products', new FormData(document.getElementById('form')))
+        }
+    </script>
+
+{% endblock %}
